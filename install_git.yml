@@ -1,0 +1,19 @@
+---
+- name: Install and verify git on Rocky Linux
+  hosts: rocky
+  become: true
+  gather_facts: true
+  
+  tasks:
+  - name: Install git package
+    dnf:
+      name: git
+      state: present
+  
+  - name: Verify git installation
+    command: git --version
+    register: git_version
+  
+  - name: Display git version output
+    debug:
+      msg: "{{ git_version.stdout }}"
