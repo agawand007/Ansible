@@ -4,23 +4,33 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checkout your Ansible playbook repository
                 git branch: 'main', url: 'https://github.com/agawand007/Ansible.git'
             }
         }
         
         stage('Install Ansible') {
             steps {
-                // Install Ansible on the Jenkins agent
                 sh 'sudo dnf -y install ansible-core'
             }
         }
         
         stage('Run Ansible Playbook') {
             steps {
-                // Run the Ansible playbook
-		sh 'ansible-playbook -i inventory.ini lab5.yaml --vault-password-file=.vault_pass'
+                withCredentials([string(credentialsId: 'ansible-vault-password', variable: 'VAULT_PASS')]) {
+                    sh '''
+                        echo "$VAULT_PASS" > /tmp/.vault_pass
+                        chmod 600 /tmp/.vault_pass
+                        ansible-playbook -i inventory.ini lab5.yaml --vault-password-file=/tmp/.vault_pass
+                        rm -f /tmp/.vault_pass
+                    '''
+                }
             }
+        }
+    }
+    
+    post {
+        always {
+            sh 'rm -f /tmp/.vault_pass'
         }
     }
 }
