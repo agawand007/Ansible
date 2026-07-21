@@ -19,7 +19,7 @@ pipeline {
         stage('Run Ansible Playbook') {
             steps {
                 // Run the Ansible playbook
-		sh 'ansible-playbook -i inventory.ini lab5.yaml  --ask-vault-pass'
+		sh 'ansible-playbook -i inventory.ini lab5.yaml --vault-password-file=.vault_pass'
             }
         }
     }
