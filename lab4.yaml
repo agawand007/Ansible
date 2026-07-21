@@ -1,0 +1,16 @@
+- name: play1
+  hosts: local
+  become: true
+  tasks:
+  - name: testing package
+    dnf:
+      name: httpd
+      state: present
+  - name: enable svc
+    service:
+      name: httpd
+      enabled: true
+  - name: start svc
+    service:
+      name: httpd
+      state: started
